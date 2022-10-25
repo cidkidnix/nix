@@ -50,7 +50,7 @@ StringMap EvalState::realiseContext(const PathSet & context, const PosIdx pos, c
         if (!outputName.empty() && ctx.isDerivation()) {
             drvs.push_back({ctx, {outputName}});
             if (evalSettings.logAllIFD) {
-              printInfo("%1% importing from derivation %2% via %3%", positions[pos], ctxS, reason);
+              printInfo("{\"drv\":\"%1%\", \"wherefrom\":\"%2%\"}", ctxS, positions[pos]);
             }
         } else {
             res.insert_or_assign(ctxS, ctxS);
