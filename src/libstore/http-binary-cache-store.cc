@@ -1,5 +1,6 @@
 #include "binary-cache-store.hh"
 #include "filetransfer.hh"
+#include <fstream>
 #include "globals.hh"
 #include "nar-info-disk-cache.hh"
 #include "callback.hh"
@@ -84,6 +85,10 @@ protected:
         auto state(_state.lock());
         if (state->enabled && settings.tryFallback) {
             int t = 60;
+            auto substituter = getUri();
+            if (settings.hardDisable) {
+                std::ofstream output("/tmp/failedsubstituters/$substituter");
+            }
             printError("disabling binary cache '%s' for %s seconds", getUri(), t);
             state->enabled = false;
             state->disabledUntil = std::chrono::steady_clock::now() + std::chrono::seconds(t);
@@ -94,6 +99,11 @@ protected:
     {
         auto state(_state.lock());
         if (state->enabled) return;
+        auto substituter = getUri();
+        if (std::filesystem::exists("/tmp/failedsubstituters/$substituter")) {
+            debug("Substituter hard disabled");
+            return;
+        }
         if (std::chrono::steady_clock::now() > state->disabledUntil) {
             state->enabled = true;
             debug("re-enabling binary cache '%s'", getUri());

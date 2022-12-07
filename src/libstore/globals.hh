@@ -97,6 +97,8 @@ public:
     Setting<bool> keepGoing{this, false, "keep-going",
         "Whether to keep building derivations when another build fails."};
 
+    Setting<bool> hardDisable{this, false, "hard-disable", ""};
+
     Setting<bool> tryFallback{
         this, false, "fallback",
         R"(
@@ -563,10 +565,10 @@ public:
           cache) must have a signature by a trusted key. A trusted key is one
           listed in `trusted-public-keys`, or a public key counterpart to a
           private key stored in a file listed in `secret-key-files`.
-          
+
           Set to `false` to disable signature checking and trust all
           non-content-addressed paths unconditionally.
-          
+
           (Content-addressed paths are inherently trustworthy and thus
           unaffected by this configuration option.)
         )"};
